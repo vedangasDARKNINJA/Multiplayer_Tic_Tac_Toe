@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+!premake5.exe
+
+# Directories
+build/
