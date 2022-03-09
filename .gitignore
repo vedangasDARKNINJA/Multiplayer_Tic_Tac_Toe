@@ -34,4 +34,5 @@
 !premake5.exe
 
 # Directories
+.cache/
 build/

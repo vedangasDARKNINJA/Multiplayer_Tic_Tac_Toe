@@ -1,15 +1,8 @@
 #!/bin/bash
 
-if [[ ! -d "./build" ]]
-then
+./GenerateProject.sh
 
-	echo "Build directory not found!"
-	read -n1 -r -p "Press any key to continue..." key
-	exit
-fi
-
-cd build
-make clean
-make
+make clean -C build
+bear make -C build
 
 read -n1 -r -p "Press any key to continue..." key
