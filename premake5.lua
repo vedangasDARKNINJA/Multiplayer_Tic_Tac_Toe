@@ -33,7 +33,6 @@ workspace "GameEngine"
 	filter{}
 	
 	location "build"
-	targetdir "build/bin/%{cfg.buildcfg}/"
 
 include "dependencies/raylib"
 
@@ -45,6 +44,7 @@ project "Game"
 	
 	targetdir "%{_MAIN_SCRIPT_DIR}/build/bin/%{cfg.buildcfg}"
 	objdir "%{_MAIN_SCRIPT_DIR}/build/bin-int/%{cfg.buildcfg}"
+	debugdir "%{_MAIN_SCRIPT_DIR}/"
 		
 	files {"src/**.c", "src/**.cpp", "src/**.h"}
 

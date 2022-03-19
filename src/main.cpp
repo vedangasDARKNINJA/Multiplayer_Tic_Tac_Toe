@@ -19,10 +19,17 @@ int main(int argc, char** argv)
 		arguments.ParseArg(argv[i]);
 	}
 
-	Game game;
-	game.InitClient(arguments.width, arguments.height, arguments.title);
-	game.Run();
-	game.Close();
+	if (argc < 2)
+	{
+		Game::Get().InitClient(1280, 720, "Game");
+	}
+	else
+	{
+		Game::Get().InitClient(arguments.width, arguments.height, arguments.title);
+	}
 
+	Game::Get().Run();
+	
+	Game::Get().Shutdown();
 	return 0;
 }

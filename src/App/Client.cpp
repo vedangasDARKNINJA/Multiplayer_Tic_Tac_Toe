@@ -1,32 +1,59 @@
 #include "Client.h"
+#include "StateLibrary/StateLibrary.h"
+
+#include "StateLibrary/MenuState.h"
+#include "StateLibrary/PlayState.h"
+#include "StateLibrary/PostGameState.h"
+
 #include "raylib.h"
 
 Client::Client(int width, int height, const char* title)
+	: m_Width(width)
+	, m_Height(height)
+	, m_Title(title)
 {
+
+	StateLibrary::Get().RegisterState(APP_STATE::MENU, std::make_unique<MenuState>());
+	StateLibrary::Get().RegisterState(APP_STATE::PLAY, std::make_unique<PlayState>());
+	StateLibrary::Get().RegisterState(APP_STATE::POSTGAME, std::make_unique<PostGameState>());
+
 	InitWindow(width, height, title);
 	SetTargetFPS(60);
 }
 
 Client::~Client()
-{
-	CloseWindow();
+{	
 }
 
 void Client::Run()
 {
-	while(!WindowShouldClose())
-	{
-		BeginDrawing();
+	StateLibrary::Get().Init();
 
+	while(!WindowShouldClose() && !m_ShouldQuit)
+	{
+		StateLibrary::Get().ProcessStateChanges();
+
+#ifdef DEBUG
+		StateLibrary::Get().ProcessEvents();
+#endif // DEBUG
+
+		StateLibrary::Get().Update();
+
+		BeginDrawing();
 		ClearBackground(RAYWHITE);
 
-		DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+		StateLibrary::Get().Render();
 
 		EndDrawing();
 	}
 }
 
-void Client::Close()
+void Client::Quit() 
 {
-	delete this;
+	m_ShouldQuit = true;
+}
+
+void Client::Shutdown() 
+{
+	CloseWindow();
 }
