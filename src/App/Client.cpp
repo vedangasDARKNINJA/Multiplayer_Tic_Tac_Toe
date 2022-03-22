@@ -2,10 +2,14 @@
 #include "StateLibrary/StateLibrary.h"
 
 #include "StateLibrary/MenuState.h"
+#include "StateLibrary/WaitState.h"
 #include "StateLibrary/PlayState.h"
 #include "StateLibrary/PostGameState.h"
 
 #include "raylib.h"
+
+#include "Networking/NetworkManager.h"
+
 
 Client::Client(int width, int height, const char* title)
 	: m_Width(width)
@@ -14,6 +18,7 @@ Client::Client(int width, int height, const char* title)
 {
 
 	StateLibrary::Get().RegisterState(APP_STATE::MENU, std::make_unique<MenuState>());
+	StateLibrary::Get().RegisterState(APP_STATE::WAIT, std::make_unique<WaitState>());
 	StateLibrary::Get().RegisterState(APP_STATE::PLAY, std::make_unique<PlayState>());
 	StateLibrary::Get().RegisterState(APP_STATE::POSTGAME, std::make_unique<PostGameState>());
 
@@ -28,10 +33,10 @@ Client::~Client()
 void Client::Run()
 {
 	StateLibrary::Get().Init();
-
 	while(!WindowShouldClose() && !m_ShouldQuit)
 	{
 		StateLibrary::Get().ProcessStateChanges();
+		NetworkManager::Get().PollEvents();
 
 #ifdef DEBUG
 		StateLibrary::Get().ProcessEvents();
@@ -56,4 +61,5 @@ void Client::Quit()
 void Client::Shutdown() 
 {
 	CloseWindow();
+	NetworkManager::Get().Shutdown();
 }

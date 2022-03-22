@@ -9,6 +9,7 @@
 enum class APP_STATE : unsigned int
 {
 	MENU = 0,
+	WAIT,
 	PLAY,
 	POSTGAME,
 	MAX_STATES

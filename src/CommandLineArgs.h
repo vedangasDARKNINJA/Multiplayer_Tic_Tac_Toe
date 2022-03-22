@@ -9,10 +9,10 @@ enum class ApplicationMode
 
 struct CommandLineArgs
 {
-	ApplicationMode mode;
-	unsigned int width;
-	unsigned int height;
-	const char* title;
+	ApplicationMode mode = ApplicationMode::CLIENT;
+	unsigned int width = 0;
+	unsigned int height = 0;
+	const char* title = "Game";
 
 	void ParseArg(char* arg);
 };

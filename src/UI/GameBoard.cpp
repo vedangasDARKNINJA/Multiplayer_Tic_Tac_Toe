@@ -56,9 +56,10 @@ void GameBoard::Init(unsigned int rows, unsigned int cols)
 	FillBoxes();
 }
 
-int GameBoard::Update(const int* data)
+int GameBoard::Update(const int* data, bool checkForInput /*= true*/)
 {
 	int selectedTile = -1;
+	int hovered = -1;
 	Vector2 mousePoint = GetMousePosition();
 
 	for(int y = 0; y < m_Rows; ++y)
@@ -80,23 +81,31 @@ int GameBoard::Update(const int* data)
 				}
 			}
 
-			if(m_BoxStates[linearIndex] != 2)
+			if(checkForInput)
 			{
-				if(CheckCollisionPointRec(mousePoint, m_Boxes[linearIndex]))
+				if(m_BoxStates[linearIndex] != 2)
 				{
-					if(IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+					if(CheckCollisionPointRec(mousePoint, m_Boxes[linearIndex]) && hovered == -1)
 					{
-						m_BoxStates[linearIndex] = 2;
-						selectedTile = linearIndex;
+						if(IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+						{
+							m_BoxStates[linearIndex] = 2;
+							selectedTile = linearIndex;
+						}
+						else
+						{
+							m_BoxStates[linearIndex] = 1;
+							hovered = linearIndex;
+						}
 					}
 					else
 					{
-						m_BoxStates[linearIndex] = 1;
+						m_BoxStates[linearIndex] = 0;
+						if(hovered > -1)
+						{
+							hovered = -1;
+						}
 					}
-				}
-				else
-				{
-					m_BoxStates[linearIndex] = 0;
 				}
 			}
 		}
@@ -107,8 +116,6 @@ int GameBoard::Update(const int* data)
 
 void GameBoard::Render()
 {
-	Vector2 blockPosition{m_Bounds.x, m_Bounds.y};
-
 	for(int y = 0; y < m_Rows; ++y)
 	{
 		for(int x = 0; x < m_Cols; ++x)
@@ -122,28 +129,24 @@ void GameBoard::Render()
 				boxColor = DARKGRAY;
 				break;
 			}
-			case 2: {
-				boxColor = GRAY;
-				break;
-			}
 			default:
 				break;
 			}
 
-			DrawRectangle(blockPosition.x, blockPosition.y, m_BoxSize.x, m_BoxSize.y, boxColor);
+			DrawRectangleRec(m_Boxes[linearIndex], boxColor);
 			if(m_SymbolStates[linearIndex] > 0)
 			{
 
 				const float offsetPercent = 0.5f * (1.0f - m_SymbolSizePercent);
 				Vector2 offset;
-				offset.x = blockPosition.x + offsetPercent * m_BoxSize.x;
-				offset.y = blockPosition.y + offsetPercent * m_BoxSize.y;
+				offset.x = m_Boxes[linearIndex].x + offsetPercent * m_BoxSize.x;
+				offset.y = m_Boxes[linearIndex].y + offsetPercent * m_BoxSize.y;
 
 				Rectangle frameRect = {(m_SymbolStates[linearIndex] - 1) * 0.5f *
 										   m_SymbolTexture.width,
 									   0,
 									   0.5f * m_SymbolTexture.width,
-									   m_SymbolTexture.height};
+									   (float)m_SymbolTexture.height};
 
 				Rectangle dstRect = {offset.x,
 									 offset.y,
@@ -152,12 +155,7 @@ void GameBoard::Render()
 
 				DrawTexturePro(m_SymbolTexture, frameRect, dstRect, Vector2{0, 0}, 0, WHITE);
 			}
-
-			blockPosition.x += m_BoxSize.x + m_Padding.x;
 		}
-
-		blockPosition.x = m_Bounds.x;
-		blockPosition.y += m_BoxSize.y + m_Padding.y;
 	}
 }
 
@@ -184,8 +182,8 @@ void GameBoard::FillBoxes()
 		{
 			//const int linearIndex = m_Cols * y + x;
 			Rectangle boxBound;
-			boxBound.x = m_Bounds.x + x * m_BoxSize.x + (x - 1 > 1 ? x - 1 : 0) * m_Padding.x;
-			boxBound.y = m_Bounds.y + y * m_BoxSize.y + (y - 1 > 1 ? y - 1 : 0) * m_Padding.y;
+			boxBound.x = m_Bounds.x + x * m_BoxSize.x + (x >= 1 ? x : 0) * m_Padding.x;
+			boxBound.y = m_Bounds.y + y * m_BoxSize.y + (y >= 1 ? y : 0) * m_Padding.y;
 			boxBound.width = m_BoxSize.x;
 			boxBound.height = m_BoxSize.y;
 			m_Boxes.push_back(boxBound);

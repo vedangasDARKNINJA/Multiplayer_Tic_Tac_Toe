@@ -50,7 +50,13 @@ project "Game"
 
 	links {"raylib"}
 	
-	includedirs { "src", "dependencies/raylib/src" }
+	includedirs 
+	{ 
+		"src", 
+		"dependencies/raylib/src",
+		"dependencies/enet/include",
+		"dependencies/cppack/msgpack/include",
+	}
 	
 	defines{"PLATFORM_DESKTOP"}
 	if (_OPTIONS["opengl43"]) then
@@ -74,3 +80,8 @@ project "Game"
 		links {"pthread", "GL", "m", "dl", "rt", "X11"}
 		
 	filter {}
+
+	postbuildcommands{
+        -- Assets
+        "{COPYDIR} %{_MAIN_SCRIPT_DIR}/assets/ %{_MAIN_SCRIPT_DIR}/build/bin/%{cfg.buildcfg}/assets/",
+    }

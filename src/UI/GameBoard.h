@@ -15,7 +15,7 @@ public:
 	void SetPosition(Vector2 position);
 	
 	void Init(unsigned int rows, unsigned int cols);
-	int Update(const int* data);
+	int Update(const int* data,bool checkForInput = true);
 	void Render();
 
 private:
@@ -23,8 +23,8 @@ private:
 	void FillBoxes();
 
 private:
-	unsigned int m_Rows;
-	unsigned int m_Cols;
+	int m_Rows;
+	int m_Cols;
 
 	std::vector<int> m_BoxStates;
 	std::vector<int> m_SymbolStates;

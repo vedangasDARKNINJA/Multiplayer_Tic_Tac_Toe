@@ -1,6 +1,7 @@
 #pragma once
 
 class IApplication;
+class GameState;
 
 class Game
 {
@@ -17,11 +18,20 @@ public:
 	void Quit();
 	void Shutdown();
 
+	GameState* GetGameState() const;
+	
+	inline bool IsClient() const
+	{
+		return m_IsClient;
+	}
+
 private:
 	Game();
 	~Game();
 
 private:
-	IApplication* m_App = nullptr;
-	bool m_Initialized = false;
+	bool m_IsClient;
+	IApplication* m_App;
+	GameState* m_GameState;
+	bool m_Initialized;
 };

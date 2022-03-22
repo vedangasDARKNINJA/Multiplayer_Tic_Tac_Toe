@@ -15,17 +15,23 @@ int main(int argc, char** argv)
 	*/
 	for(int i = 0; i < argc; ++i)
 	{
-		std::cout << argv[i] << std::endl;
 		arguments.ParseArg(argv[i]);
 	}
 
-	if (argc < 2)
+	if (arguments.mode == ApplicationMode::CLIENT)
 	{
-		Game::Get().InitClient(1280, 720, "Game");
+		if (arguments.width == 0 || arguments.height == 0)
+		{
+			Game::Get().InitClient(640, 800, "Game");
+		}
+		else
+		{
+			Game::Get().InitClient(arguments.width, arguments.height, arguments.title);
+		}
 	}
 	else
 	{
-		Game::Get().InitClient(arguments.width, arguments.height, arguments.title);
+		Game::Get().InitServer();
 	}
 
 	Game::Get().Run();

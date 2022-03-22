@@ -7,21 +7,32 @@
 
 void CommandLineArgs::ParseArg(char* arg)
 {
-	static char lastFlag = '\0';
+	static char currFlag = '\0';
+	static bool isFlag = false;
 	static bool argParsed = false;
+
+	if(strlen(arg) == 2 && arg[0] == '-' && isalpha(arg[1]))
+	{
+		currFlag = arg[1];
+		argParsed = false;
+		isFlag = true;
+	}
+	else
+	{
+		isFlag = false;
+	}
 
 	if(!argParsed)
 	{
-		if(lastFlag == 'c' || lastFlag == 's')
+		if(currFlag == 'c' || currFlag == 's')
 		{
-			mode = lastFlag == 'c' ? ApplicationMode::CLIENT : ApplicationMode::SERVER;
-			std::cout << "mode parsed: " << (unsigned int)mode << '\n';
+			mode = currFlag == 'c' ? ApplicationMode::CLIENT : ApplicationMode::SERVER;
 			argParsed = true;
 		}
-		else if(lastFlag == 'w' || lastFlag == 'h')
+		else if((currFlag == 'w' || currFlag == 'h') && !isFlag)
 		{
 			unsigned int value = std::stoi(std::string(arg));
-			if(lastFlag == 'w')
+			if(currFlag == 'w')
 			{
 				width = value;
 			}
@@ -31,16 +42,10 @@ void CommandLineArgs::ParseArg(char* arg)
 			}
 			argParsed = true;
 		}
-		else if(lastFlag == 't')
+		else if((currFlag == 't') && !isFlag)
 		{
 			title = arg;
 			argParsed = true;
 		}
-	}
-
-	if(strlen(arg) == 2 && arg[0] == '-' && isalpha(arg[1]))
-	{
-		lastFlag = arg[1];
-		argParsed = false;
 	}
 }
