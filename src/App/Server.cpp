@@ -9,9 +9,9 @@ void Server::Run()
 {
 	while(!m_ShouldClose)
 	{
-		if(kbhit())
+		if(_kbhit())
 		{
-			int code = getch();
+			int code = _getch();
 			if(code == 'q')
 			{
 				m_ShouldClose = true;
